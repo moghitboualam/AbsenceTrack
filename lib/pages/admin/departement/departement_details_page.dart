@@ -46,16 +46,6 @@ class _DepartementDetailsPageState extends State<DepartementDetailsPage> {
     }
   }
 
-  String _formatDate(DateTime? date) {
-    if (date == null) return 'N/A';
-    try {
-      // Utilisation de intl si disponible, sinon fallback simple
-      return DateFormat('dd MMMM yyyy', 'fr').format(date);
-    } catch (e) {
-      // Fallback si locale 'fr' non initialisée ou intl absent
-      return "${date.day}/${date.month}/${date.year}"; 
-    }
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -91,19 +81,6 @@ class _DepartementDetailsPageState extends State<DepartementDetailsPage> {
                               _buildDetailRow("Code", _departement!.code ?? "N/A"),
                               _buildDetailRow("Libellé", _departement!.libelle ?? "N/A"),
                               
-                              _buildDetailRow(
-                                "Chef de Département", 
-                                _departement!.chefNom ?? 
-                                (_departement!.chef != null 
-                                    ? "${_departement!.chef!.prenom} ${_departement!.chef!.nom}" 
-                                    : "Non assigné")
-                              ),
-                              
-                              if ((_departement!.chefNom != null || _departement!.chef != null) && _departement!.dateNominationChef != null)
-                                _buildDetailRow(
-                                  "Date de Nomination Chef",
-                                  _formatDate(_departement!.dateNominationChef),
-                                ),
 
                               const SizedBox(height: 24),
                               

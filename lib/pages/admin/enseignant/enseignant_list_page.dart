@@ -341,7 +341,6 @@ class _EnseignantListPageState extends State<EnseignantListPage> {
                         ),
                       ),
                     ),
-                    _buildChefBadge(item.estChefDepartement),
                   ],
                 ),
                 const SizedBox(height: 8),
@@ -435,12 +434,6 @@ class _EnseignantListPageState extends State<EnseignantListPage> {
                 ),
                 DataColumn(
                   label: Text(
-                    "Chef Dép.",
-                    style: TextStyle(fontWeight: FontWeight.bold),
-                  ),
-                ),
-                DataColumn(
-                  label: Text(
                     "Actions",
                     style: TextStyle(fontWeight: FontWeight.bold),
                   ),
@@ -453,7 +446,6 @@ class _EnseignantListPageState extends State<EnseignantListPage> {
                     DataCell(Text("${item.nom} ${item.prenom}")),
                     DataCell(Text(item.email ?? "")),
                     DataCell(Text(item.specialite ?? "N/A")),
-                    DataCell(_buildChefBadge(item.estChefDepartement)),
                     DataCell(
                       Row(
                         mainAxisSize: MainAxisSize.min,
@@ -485,21 +477,4 @@ class _EnseignantListPageState extends State<EnseignantListPage> {
   }
 
   // Petit widget pour le badge Chef Département
-  Widget _buildChefBadge(bool estChef) {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-      decoration: BoxDecoration(
-        color: estChef ? Colors.black : Colors.red,
-        borderRadius: BorderRadius.circular(12),
-      ),
-      child: Text(
-        estChef ? "Oui" : "Non",
-        style: const TextStyle(
-          color: Colors.white,
-          fontSize: 10,
-          fontWeight: FontWeight.bold,
-        ),
-      ),
-    );
-  }
 }

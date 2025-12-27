@@ -129,34 +129,30 @@ class _DepartementFormPageState extends State<DepartementFormPage> {
                             const Text("Informations Générales", style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
                             const SizedBox(height: 16),
                             // --- CODE & LIBELLE ---
-                            Row(
+                            Column(
                               children: [
-                                Expanded(
-                                  child: TextFormField(
-                                    controller: _codeController,
-                                    decoration: const InputDecoration(
-                                      labelText: "Code *",
-                                      border: OutlineInputBorder(),
-                                      prefixIcon: Icon(Icons.code),
-                                    ),
-                                    validator: (val) => (val == null || val.length < 2)
-                                        ? "Min 2 caractères"
-                                        : null,
+                                TextFormField(
+                                  controller: _codeController,
+                                  decoration: const InputDecoration(
+                                    labelText: "Code *",
+                                    border: OutlineInputBorder(),
+                                    prefixIcon: Icon(Icons.code),
                                   ),
+                                  validator: (val) => (val == null || val.length < 2)
+                                      ? "Min 2 caractères"
+                                      : null,
                                 ),
-                                const SizedBox(width: 16),
-                                Expanded(
-                                  child: TextFormField(
-                                    controller: _libelleController,
-                                    decoration: const InputDecoration(
-                                      labelText: "Libellé *",
-                                      border: OutlineInputBorder(),
-                                      prefixIcon: Icon(Icons.label),
-                                    ),
-                                    validator: (val) => (val == null || val.length < 2)
-                                        ? "Min 2 caractères"
-                                        : null,
+                                const SizedBox(height: 16),
+                                TextFormField(
+                                  controller: _libelleController,
+                                  decoration: const InputDecoration(
+                                    labelText: "Libellé *",
+                                    border: OutlineInputBorder(),
+                                    prefixIcon: Icon(Icons.label),
                                   ),
+                                  validator: (val) => (val == null || val.length < 2)
+                                      ? "Min 2 caractères"
+                                      : null,
                                 ),
                               ],
                             ),

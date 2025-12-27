@@ -217,12 +217,7 @@ class _DepartementListPageState extends State<DepartementListPage> {
       itemCount: _departements.length,
       itemBuilder: (context, index) {
         final dept = _departements[index];
-        // Modification pour utiliser chefNom
-        var chefNomComplet = dept.chefNom;
-        if (chefNomComplet == null && dept.chef != null) {
-            chefNomComplet = "${dept.chef!.prenom} ${dept.chef!.nom}";
-        }
-        
+       
         return Card(
           elevation: 2,
           margin: const EdgeInsets.only(bottom: 12),
@@ -297,16 +292,6 @@ class _DepartementListPageState extends State<DepartementListPage> {
                   ),
                 ),
                 const SizedBox(height: 8),
-                Row(
-                  children: [
-                    const Icon(Icons.person, size: 16, color: Colors.grey),
-                    const SizedBox(width: 8),
-                    Text(
-                      "Chef: ${chefNomComplet ?? 'Non assigné'}",
-                      style: const TextStyle(color: Colors.grey),
-                    ),
-                  ],
-                ),
               ],
             ),
           ),
@@ -337,12 +322,7 @@ class _DepartementListPageState extends State<DepartementListPage> {
                   style: TextStyle(fontWeight: FontWeight.bold),
                 ),
               ),
-              DataColumn(
-                label: Text(
-                  "Chef",
-                  style: TextStyle(fontWeight: FontWeight.bold),
-                ),
-              ),
+              
               DataColumn(
                 label: Text(
                   "Actions",
@@ -351,12 +331,7 @@ class _DepartementListPageState extends State<DepartementListPage> {
               ),
             ],
             rows: _departements.map((dept) {
-              // Modification pour utiliser chefNom directement
-              // Si chefNom est null, on tente le fallback sur l'objet chef (si présent)
-              var chefNomComplet = dept.chefNom;
-              if (chefNomComplet == null && dept.chef != null) {
-                 chefNomComplet = "${dept.chef!.prenom} ${dept.chef!.nom}";
-              }
+             
 
               return DataRow(
                 cells: [
@@ -367,16 +342,7 @@ class _DepartementListPageState extends State<DepartementListPage> {
                     ),
                   ),
                   DataCell(Text(dept.libelle ?? "")),
-                  DataCell(
-                    Text(
-                      chefNomComplet ?? 'Non assigné',
-                      style: TextStyle(
-                        color: chefNomComplet == null
-                            ? Colors.grey
-                            : Colors.black,
-                      ),
-                    ),
-                  ),
+                  
                   DataCell(
                     Row(
                       mainAxisSize: MainAxisSize.min,
