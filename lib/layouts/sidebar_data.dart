@@ -101,6 +101,16 @@ class SidebarData {
             icon: LucideIcons.school,
             url: "/admin/filiere",
           ),
+          SidebarItem(
+            title: "Blocs",
+            icon: LucideIcons.box,
+            url: "/admin/blocs",
+          ),
+          SidebarItem(
+            title: "Salles",
+            icon: LucideIcons.grid,
+            url: "/admin/salles",
+          ),
         ],
       ),
     ];

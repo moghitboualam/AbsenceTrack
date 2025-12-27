@@ -16,6 +16,10 @@ import 'pages/admin/etudiant/etudiant_list_page.dart'; // Vérifiez ce chemin
 import 'pages/admin/departement/departement_list_page.dart';
 import 'pages/admin/departement/departement_form_page.dart';
 import 'pages/admin/departement/departement_details_page.dart';
+import 'pages/admin/bloc/bloc_list_page.dart';
+import 'pages/admin/bloc/bloc_form_page.dart';
+import 'pages/admin/salle/salle_list_page.dart';
+import 'pages/admin/salle/salle_form_page.dart';
 import 'pages/admin/filiere_list_page.dart';
 import 'pages/etudiant/etudiant_dashboard_page.dart';
 import 'pages/etudiant/emploi_du_temps_list_page.dart';
@@ -174,6 +178,48 @@ class _MyAppState extends State<MyApp> {
             GoRoute(
               path: '/admin/filiere',
               builder: (context, state) => const FiliereListPage(),
+            ),
+
+            // --- ROUTE BLOCS ---
+            GoRoute(
+              path: '/admin/blocs',
+              builder: (context, state) => const BlocListPage(),
+            ),
+            GoRoute(
+              path: '/admin/blocs/new',
+              builder: (context, state) => const BlocFormPage(),
+            ),
+            GoRoute(
+              path: '/admin/blocs/edit/:id',
+              builder: (context, state) {
+                final id = int.tryParse(state.pathParameters['id'] ?? '');
+                return BlocFormPage(id: id);
+              },
+            ),
+
+            GoRoute(
+              path: '/admin/blocs/edit/:id',
+              builder: (context, state) {
+                final id = int.tryParse(state.pathParameters['id'] ?? '');
+                return BlocFormPage(id: id);
+              },
+            ),
+
+             // --- ROUTE SALLES ---
+            GoRoute(
+              path: '/admin/salles',
+              builder: (context, state) => const SalleListPage(),
+            ),
+            GoRoute(
+              path: '/admin/salles/new',
+              builder: (context, state) => const SalleFormPage(),
+            ),
+            GoRoute(
+              path: '/admin/salles/edit/:id',
+              builder: (context, state) {
+                final id = int.tryParse(state.pathParameters['id'] ?? '');
+                return SalleFormPage(id: id);
+              },
             ),
 
             // --- ROUTES ENSEIGNANT ---
