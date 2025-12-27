@@ -2,9 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart'; // Ajoutez le package intl dans pubspec.yaml pour formater les dates
 import '../../../apiservice/admin/admin_enseignant_service.dart';
-import '../../../apiservice/admin/admin_departement_service.dart';
 import '../../../dto/enseignant/enseignant_request.dart';
-import '../../../dto/departement/assigne_chef_request.dart';
 import '../../../main.dart'; // Pour rootScaffoldMessengerKey
 
 class EnseignantFormPage extends StatefulWidget {
@@ -19,26 +17,17 @@ class EnseignantFormPage extends StatefulWidget {
 class _EnseignantFormPageState extends State<EnseignantFormPage> {
   final _formKey = GlobalKey<FormState>();
   final AdminEnseignantService _enseignantService = AdminEnseignantService();
-  final AdminDepartementService _departementService = AdminDepartementService();
-
   // Contrôleurs
   late TextEditingController _nomController;
   late TextEditingController _prenomController;
   late TextEditingController _emailController;
   late TextEditingController _passwordController;
   late TextEditingController _specialiteController;
-  late TextEditingController _dateNominationController;
 
   // États
   bool _isLoading = true;
   bool _isSubmitting = false;
   bool _isPasswordVisible = false;
-
-  // Champs spécifiques
-  bool _estChefDepartement = false;
-  String? _selectedDepartementId;
-  String? _initialDepartementId; // Pour détecter la désassignation
-  List<dynamic> _departements = []; // Liste simple de maps ou DTOs
 
   @override
   void initState() {
@@ -53,7 +42,6 @@ class _EnseignantFormPageState extends State<EnseignantFormPage> {
     _emailController = TextEditingController();
     _passwordController = TextEditingController();
     _specialiteController = TextEditingController();
-    _dateNominationController = TextEditingController();
   }
 
   @override
@@ -63,21 +51,12 @@ class _EnseignantFormPageState extends State<EnseignantFormPage> {
     _emailController.dispose();
     _passwordController.dispose();
     _specialiteController.dispose();
-    _dateNominationController.dispose();
     super.dispose();
   }
 
   // --- CHARGEMENT DES DONNÉES ---
   Future<void> _loadDependencies() async {
     try {
-      // 1. Charger les départements
-      final deptResponse = await _departementService.getAllDepartements(
-        size: 100,
-      );
-      setState(() {
-        _departements = deptResponse['content'] ?? [];
-      });
-
       // 2. Si mode édition, charger l'enseignant
       if (widget.id != null) {
         final data = await _enseignantService.getEnseignantById(widget.id!);
@@ -87,21 +66,6 @@ class _EnseignantFormPageState extends State<EnseignantFormPage> {
           _prenomController.text = data.prenom ?? '';
           _emailController.text = data.email ?? '';
           _specialiteController.text = data.specialite ?? '';
-
-          _estChefDepartement = data.estChefDepartement;
-
-          if (data.dateNominationChef != null) {
-            _dateNominationController.text = DateFormat(
-              'yyyy-MM-dd',
-            ).format(data.dateNominationChef!);
-          }
-
-          // Logique pour retrouver l'ID du département s'il est lié (à adapter selon votre DTO retourné)
-          // Supposons que le DTO ait un champ 'departementId' ou un objet 'departement'
-          if (data.departementId != null) {
-            _selectedDepartementId = data.departementId.toString();
-            _initialDepartementId = data.departementId.toString();
-          }
         });
       }
     } catch (e) {
@@ -111,22 +75,6 @@ class _EnseignantFormPageState extends State<EnseignantFormPage> {
     }
   }
 
-  // --- SÉLECTION DE DATE ---
-  Future<void> _selectDate(BuildContext context) async {
-    final DateTime? picked = await showDatePicker(
-      context: context,
-      initialDate: DateTime.now(),
-      firstDate: DateTime(2000),
-      lastDate: DateTime(2100),
-    );
-    if (picked != null) {
-      setState(() {
-        _dateNominationController.text = DateFormat(
-          'yyyy-MM-dd',
-        ).format(picked);
-      });
-    }
-  }
 
   // --- SOUMISSION ---
   Future<void> _handleSubmit() async {
@@ -143,64 +91,16 @@ class _EnseignantFormPageState extends State<EnseignantFormPage> {
           ? null
           : _passwordController.text,
       specialite: _specialiteController.text.trim(),
-      estChefDepartement: _estChefDepartement,
-      dateNominationChef:
-          (_estChefDepartement && _dateNominationController.text.isNotEmpty)
-          ? DateTime.parse(_dateNominationController.text)
-          : null,
-      // Ajoutez departementId au DTO EnseignantRequest si nécessaire pour l'assignation directe
     );
 
     try {
       if (widget.id != null) {
         // UPDATE
         await _enseignantService.updateEnseignant(widget.id!, request);
-
-        // Si chef, assigner le département (Appel séparé comme dans React)
-        if (_estChefDepartement && _selectedDepartementId != null) {
-          await _enseignantService.assignChefDepartement(widget.id!, {
-            'estChefDepartement': true,
-            'dateNominationChef': _dateNominationController.text,
-            'departementId': int.parse(_selectedDepartementId!),
-          });
-
-          // 2. Update Departement (Côté Département) - NEW
-          final deptId = int.parse(_selectedDepartementId!);
-          final dateNomination = DateTime.parse(_dateNominationController.text);
-          final assignRequest = AssignChefRequest(
-            departementId: deptId,
-            estChefDepartement: true,
-            enseignantId: widget.id!,
-            dateNominationChef: dateNomination,
-          );
-          await _departementService.assignChefToDepartement(deptId, assignRequest);
-        }
-        else if (!_estChefDepartement && _initialDepartementId != null) {
-            // UNASSIGN: Si n'est plus chef mais l'était avant
-            final deptId = int.parse(_initialDepartementId!);
-            final assignRequest = AssignChefRequest(
-              departementId: deptId,
-              estChefDepartement: false,
-              enseignantId: widget.id!,
-              dateNominationChef: DateTime.now(), // Ignoré
-            );
-            await _departementService.assignChefToDepartement(deptId, assignRequest);
-        }
         _showSnackBar("Enseignant mis à jour avec succès");
       } else {
         // CREATE
-        final created = await _enseignantService.createEnseignant(request);
-
-        // Si chef, assigner le département
-        if (_estChefDepartement &&
-            _selectedDepartementId != null &&
-            created.id != null) {
-          await _enseignantService.assignChefDepartement(created.id!, {
-            'estChefDepartement': true,
-            'dateNominationChef': _dateNominationController.text,
-            'departementId': int.parse(_selectedDepartementId!),
-          });
-        }
+        await _enseignantService.createEnseignant(request);
         _showSnackBar("Enseignant créé avec succès");
       }
 
@@ -329,73 +229,6 @@ class _EnseignantFormPageState extends State<EnseignantFormPage> {
                     ),
                     const SizedBox(height: 20),
 
-                    // --- CHEF DE DÉPARTEMENT (Checkbox) ---
-                    CheckboxListTile(
-                      title: const Text("Est Chef de Département ?"),
-                      value: _estChefDepartement,
-                      onChanged: (val) =>
-                          setState(() => _estChefDepartement = val ?? false),
-                      contentPadding: EdgeInsets.zero,
-                      controlAffinity: ListTileControlAffinity.leading,
-                    ),
-
-                    // --- CHAMPS CONDITIONNELS ---
-                    if (_estChefDepartement) ...[
-                      const SizedBox(height: 10),
-                      Container(
-                        padding: const EdgeInsets.all(15),
-                        decoration: BoxDecoration(
-                          color: Colors.blue[50],
-                          borderRadius: BorderRadius.circular(8),
-                          border: Border.all(color: Colors.blue[100]!),
-                        ),
-                        child: Column(
-                          children: [
-                            // Date Picker
-                            TextFormField(
-                              controller: _dateNominationController,
-                              readOnly: true,
-                              onTap: () => _selectDate(context),
-                              decoration: const InputDecoration(
-                                labelText: "Date de Nomination *",
-                                border: OutlineInputBorder(),
-                                suffixIcon: Icon(Icons.calendar_today),
-                              ),
-                              validator: (v) =>
-                                  _estChefDepartement &&
-                                      (v == null || v.isEmpty)
-                                  ? "Requis"
-                                  : null,
-                            ),
-                            const SizedBox(height: 15),
-
-                            // Dropdown Départements
-                            DropdownButtonFormField<String>(
-                              value: _selectedDepartementId,
-                              decoration: const InputDecoration(
-                                labelText: "Département *",
-                                border: OutlineInputBorder(),
-                              ),
-                              items: _departements
-                                  .map<DropdownMenuItem<String>>((dept) {
-                                    return DropdownMenuItem(
-                                      value: dept['id'].toString(),
-                                      child: Text(
-                                        dept['libelle'] ?? 'Sans nom',
-                                      ),
-                                    );
-                                  })
-                                  .toList(),
-                              onChanged: (val) =>
-                                  setState(() => _selectedDepartementId = val),
-                              validator: (v) => _estChefDepartement && v == null
-                                  ? "Requis"
-                                  : null,
-                            ),
-                          ],
-                        ),
-                      ),
-                    ],
 
                     const SizedBox(height: 30),
 

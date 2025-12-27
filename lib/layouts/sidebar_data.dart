@@ -40,6 +40,26 @@ class SidebarData {
         icon: LucideIcons.home,
         url: "/etudiant",
       ),
+      SidebarItem(
+        title: "Mon emploi du temps",
+        icon: LucideIcons.calendar,
+        url: "/etudiant/emploi-du-temps",
+      ),
+      SidebarItem(
+        title: "Mes absences",
+        icon: LucideIcons.userX,
+        url: "/etudiant/absences",
+      ),
+      SidebarItem(
+        title: "Mes séances",
+        icon: LucideIcons.presentation,
+        url: "/etudiant/seances",
+      ),
+      SidebarItem(
+        title: "Mes justifications",
+        icon: LucideIcons.fileText,
+        url: "/etudiant/justifications",
+      ),
     ];
   }
 

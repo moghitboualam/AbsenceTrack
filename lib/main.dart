@@ -21,6 +21,7 @@ import 'pages/etudiant/etudiant_dashboard_page.dart';
 import 'pages/etudiant/emploi_du_temps_list_page.dart';
 import 'pages/etudiant/emploi_du_temps_detail_page.dart';
 import 'pages/etudiant/emploi_du_temps_pdf_view_page.dart';
+import 'pages/etudiant/student_placeholder_pages.dart'; // Import pages placeholders
 import 'pages/enseignant/enseignant_dashboard_page.dart';
 import 'pages/enseignant/emploi_du_temps_page.dart';
 
@@ -203,6 +204,18 @@ class _MyAppState extends State<MyApp> {
               path: '/etudiant/emploi-du-temps/view-pdf/:id',
               builder: (context, state) =>
                   EmploiDuTempsPdfViewPage(id: state.pathParameters['id']),
+            ),
+             GoRoute(
+              path: '/etudiant/absences',
+              builder: (context, state) => const MesAbsencesPage(),
+            ),
+             GoRoute(
+              path: '/etudiant/seances',
+              builder: (context, state) => const MesSeancesPage(),
+            ),
+             GoRoute(
+              path: '/etudiant/justifications',
+              builder: (context, state) => const MesJustificationsPage(),
             ),
           ],
         ),
