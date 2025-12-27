@@ -1,0 +1,248 @@
+import 'package:flutter/material.dart';
+import 'package:flutter_dashboard_app/pages/admin/etudiant/etudiant_form_page.dart';
+import 'package:go_router/go_router.dart';
+import 'package:provider/provider.dart';
+import 'package:shadcn_ui/shadcn_ui.dart';
+
+// Vos imports existants...
+import 'services/env_service.dart';
+import 'services/auth_service.dart';
+import 'layouts/dashboard_layout.dart';
+import 'pages/auth/login_page.dart';
+import 'pages/admin/admin_home.dart';
+import 'pages/admin/enseignant/enseignant_list_page.dart';
+import 'pages/admin/enseignant/enseignant_form_page.dart';
+import 'pages/admin/etudiant/etudiant_list_page.dart'; // Vérifiez ce chemin
+import 'pages/admin/departement/departement_list_page.dart';
+import 'pages/admin/departement/departement_form_page.dart';
+import 'pages/admin/departement/departement_details_page.dart';
+import 'pages/admin/filiere_list_page.dart';
+import 'pages/etudiant/etudiant_dashboard_page.dart';
+import 'pages/etudiant/emploi_du_temps_list_page.dart';
+import 'pages/etudiant/emploi_du_temps_detail_page.dart';
+import 'pages/etudiant/emploi_du_temps_pdf_view_page.dart';
+import 'pages/enseignant/enseignant_dashboard_page.dart';
+import 'pages/enseignant/emploi_du_temps_page.dart';
+
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await EnvService.loadEnv();
+
+  runApp(
+    ChangeNotifierProvider(
+      create: (_) => AuthService()..initializeAuth(), // On lance l'init ici
+      child: const MyApp(),
+    ),
+  );
+}
+
+final GlobalKey<ScaffoldMessengerState> rootScaffoldMessengerKey =
+    GlobalKey<ScaffoldMessengerState>();
+
+class MyApp extends StatefulWidget {
+  const MyApp({super.key});
+
+  @override
+  State<MyApp> createState() => _MyAppState();
+}
+
+class _MyAppState extends State<MyApp> {
+  // On déclare le router comme 'late' mais on l'initialise une seule fois
+  late final GoRouter _router;
+
+  @override
+  void initState() {
+    super.initState();
+
+    final authService = Provider.of<AuthService>(context, listen: false);
+
+    _router = GoRouter(
+      initialLocation: '/login',
+      refreshListenable: authService, // Le routeur réagit aux notifyListeners()
+      redirect: (context, state) {
+        // 1. Si l'auth charge encore, on ne redirige pas (on reste sur place)
+        if (authService.loading) return null;
+
+        final bool loggedIn = authService.isAuthenticated;
+        final bool isLoggingIn = state.matchedLocation == '/login';
+
+        // 2. Si non connecté et pas sur la page login -> Login
+        if (!loggedIn && !isLoggingIn) return '/login';
+
+        // 3. Si connecté et sur la page login -> Accueil
+        if (loggedIn && isLoggingIn) return authService.getHomeRoute();
+
+        // 4. Vérification des Rôles (Sécurité)
+        // On vérifie que 'user' n'est pas null avant de vérifier le rôle
+        if (loggedIn && authService.user != null) {
+          final role = authService.user!.role;
+
+          if (state.matchedLocation.startsWith('/admin') && role != 'admin') {
+            return authService.getHomeRoute();
+          }
+          if (state.matchedLocation.startsWith('/enseignant') &&
+              role != 'enseignant') {
+            return authService.getHomeRoute();
+          }
+          if (state.matchedLocation.startsWith('/etudiant') &&
+              role != 'etudiant') {
+            return authService.getHomeRoute();
+          }
+        }
+
+        return null;
+      },
+      routes: [
+        GoRoute(path: '/login', builder: (context, state) => const LoginPage()),
+        ShellRoute(
+          builder: (context, state, child) => DashboardLayout(child: child),
+          routes: [
+            // --- ROUTES ADMIN ---
+            GoRoute(
+              path: '/espace-employe/admin', // Route d'accueil Admin
+              builder: (context, state) => const AdminHomePage(),
+            ),
+            GoRoute(
+              path: '/admin',
+              builder: (context, state) => const AdminHomePage(),
+            ),
+            GoRoute(
+              path: '/admin/etudiants',
+              builder: (context, state) => const EtudiantListPage(),
+            ),
+            // Route pour AJOUTER (/admin/etudiants/new)
+            GoRoute(
+              path:
+                  '/admin/etudiant/new', // Notez l'absence de '/' au début pour une sous-route
+              builder: (context, state) => const EtudiantFormPage(id: null),
+            ),
+            // Route pour MODIFIER (/admin/etudiants/edit/12)
+            GoRoute(
+              path: '/admin/etudiant/edit/:id',
+              builder: (context, state) {
+                // On récupère l'ID depuis l'URL
+                final idStr = state.pathParameters['id'];
+                final id = int.tryParse(idStr ?? '');
+                return EtudiantFormPage(id: id);
+              },
+            ),
+            GoRoute(
+              path: '/admin/enseignants',
+              builder: (context, state) => const EnseignantListPage(),
+            ),
+             GoRoute(
+              path: '/admin/enseignants/new',
+              builder: (context, state) => const EnseignantFormPage(id: null),
+            ),
+            GoRoute(
+              path: '/admin/enseignants/edit/:id',
+              builder: (context, state) {
+                final idStr = state.pathParameters['id'];
+                final id = int.tryParse(idStr ?? '');
+                return EnseignantFormPage(id: id);
+              },
+            ),
+            GoRoute(
+              path: '/admin/departements',
+              builder: (context, state) => const DepartementListPage(),
+            ),
+            GoRoute(
+              path: '/admin/departements/new',
+              builder: (context, state) => const DepartementFormPage(id: null),
+            ),
+            GoRoute(
+              path: '/admin/departements/edit/:id',
+              builder: (context, state) {
+                final idStr = state.pathParameters['id'];
+                final id = int.tryParse(idStr ?? '');
+                return DepartementFormPage(id: id);
+              },
+            ),
+             GoRoute(
+              path: '/admin/departements/details/:id',
+              builder: (context, state) {
+                final idStr = state.pathParameters['id'];
+                final id = int.tryParse(idStr ?? '');
+                // Handle invalid ID case if necessary
+                 if (id == null) {
+                    return const Scaffold(body: Center(child: Text("ID Invalide")));
+                }
+                return DepartementDetailsPage(id: id);
+              },
+            ),
+            GoRoute(
+              path: '/admin/filiere',
+              builder: (context, state) => const FiliereListPage(),
+            ),
+
+            // --- ROUTES ENSEIGNANT ---
+            GoRoute(
+              path: '/enseignant',
+              builder: (context, state) => const EnseignantDashboardPage(),
+            ),
+            GoRoute(
+              path: '/enseignant/edt',
+              builder: (context, state) => const EnseignantEmploiDuTempsPage(),
+            ),
+
+            // --- ROUTES ETUDIANT ---
+            GoRoute(
+              path: '/etudiant',
+              builder: (context, state) => const EtudiantDashboardPage(),
+            ),
+            GoRoute(
+              path: '/etudiant/emploi-du-temps',
+              builder: (context, state) => const EmploiDuTempsListPage(),
+            ),
+            GoRoute(
+              path: '/etudiant/emploi-du-temps/:id',
+              builder: (context, state) =>
+                  EmploiDuTempsDetailPage(id: state.pathParameters['id']),
+            ),
+            GoRoute(
+              path: '/etudiant/emploi-du-temps/view-pdf/:id',
+              builder: (context, state) =>
+                  EmploiDuTempsPdfViewPage(id: state.pathParameters['id']),
+            ),
+          ],
+        ),
+      ],
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    // CRUCIAL : On écoute l'état de l'auth ici
+    final authService = context.watch<AuthService>();
+
+    // Si l'authentification est en cours de chargement (vérification du token),
+    // on affiche un écran de chargement simple au lieu du routeur.
+    if (authService.loading) {
+      return const MaterialApp(
+        home: Scaffold(body: Center(child: CircularProgressIndicator())),
+      );
+    }
+
+    // 1. On remplace ShadApp.router par MaterialApp.router
+    return MaterialApp.router(
+      debugShowCheckedModeBanner: false,
+
+      // 2. La clé fonctionne ici car c'est un paramètre natif de MaterialApp
+      scaffoldMessengerKey: rootScaffoldMessengerKey,
+
+      routerConfig: _router,
+
+      // 3. On injecte le thème Shadcn via le builder
+      builder: (context, child) {
+        return ShadTheme(
+          data: ShadThemeData(
+            brightness: Brightness.light,
+            colorScheme: const ShadZincColorScheme.light(),
+          ),
+          // On enveloppe le contenu de l'app (child) avec le thème
+          child: child ?? const SizedBox.shrink(),
+        );
+      },
+    );
+  }
+}

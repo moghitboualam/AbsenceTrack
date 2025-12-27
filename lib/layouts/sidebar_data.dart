@@ -1,0 +1,88 @@
+import 'package:flutter/material.dart';
+import 'package:lucide_icons/lucide_icons.dart';
+
+class SidebarItem {
+  final String title;
+  final IconData icon;
+  final String? url;
+  final List<SidebarItem>? items;
+
+  SidebarItem({required this.title, required this.icon, this.url, this.items});
+}
+
+class SidebarData {
+  static List<SidebarItem> getNavMain(String role) {
+    if (role == 'admin') {
+      return [
+        SidebarItem(
+          title: "Dashboard",
+          icon: LucideIcons.layoutDashboard,
+          url: "/admin",
+        ),
+      ];
+    } else if (role == 'enseignant') {
+      return [
+        SidebarItem(
+          title: "Tableau de bord",
+          icon: LucideIcons.home,
+          url: "/enseignant",
+        ),
+        SidebarItem(
+          title: "Mon Emploi du Temps",
+          icon: LucideIcons.calendarClock,
+          url: "/enseignant/edt",
+        ),
+      ];
+    }
+    return [
+      SidebarItem(
+        title: "Tableau de bord",
+        icon: LucideIcons.home,
+        url: "/etudiant",
+      ),
+    ];
+  }
+
+  static List<SidebarItem> getNavCollapsible(String role) {
+    if (role != 'admin') return [];
+    return [
+      SidebarItem(
+        title: "Gestion Utilisateurs",
+        icon: LucideIcons.userCog,
+        items: [
+          SidebarItem(
+            title: "Departements",
+            icon: LucideIcons.graduationCap,
+            url: "/admin/departements",
+          ),
+          SidebarItem(
+            title: "Enseignants",
+            icon: LucideIcons.users,
+            url: "/admin/enseignants",
+          ),
+          SidebarItem(
+            title: "Étudiants",
+            icon: LucideIcons.graduationCap,
+            url: "/admin/etudiants",
+          ),
+        ],
+      ),
+      SidebarItem(
+        title: "Structure Académique",
+        icon: LucideIcons.school,
+        items: [
+          SidebarItem(
+            title: "Départements",
+            icon: LucideIcons.briefcase,
+            url: "/admin/departements",
+          ),
+          SidebarItem(
+            title: "Filières",
+            icon: LucideIcons.school,
+            url: "/admin/filiere",
+          ),
+        ],
+      ),
+    ];
+  }
+}

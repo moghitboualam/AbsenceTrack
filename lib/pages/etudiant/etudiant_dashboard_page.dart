@@ -1,0 +1,27 @@
+import 'package:flutter/material.dart';
+
+class EtudiantDashboardPage extends StatelessWidget {
+  const EtudiantDashboardPage({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return const Center(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Icon(Icons.dashboard, size: 64, color: Colors.blue),
+          SizedBox(height: 16),
+          Text(
+            'Tableau de bord Étudiant',
+            style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+          ),
+          SizedBox(height: 8),
+          Text(
+            'Bienvenue sur votre tableau de bord',
+            style: TextStyle(fontSize: 16, color: Colors.grey),
+          ),
+        ],
+      ),
+    );
+  }
+}
