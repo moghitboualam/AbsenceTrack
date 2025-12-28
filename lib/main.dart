@@ -22,6 +22,8 @@ import 'pages/admin/salle/salle_list_page.dart';
 import 'pages/admin/salle/salle_form_page.dart';
 import 'pages/admin/filiere/filiere_list_page.dart';
 import 'pages/admin/filiere/filiere_form_page.dart';
+import 'pages/admin/module/module_list_page.dart';
+import 'pages/admin/module/module_form_page.dart';
 import 'pages/etudiant/etudiant_dashboard_page.dart';
 import 'pages/etudiant/emploi_du_temps_list_page.dart';
 import 'pages/etudiant/emploi_du_temps_detail_page.dart';
@@ -189,6 +191,23 @@ class _MyAppState extends State<MyApp> {
               builder: (context, state) {
                 final id = int.tryParse(state.pathParameters['id'] ?? '');
                 return FiliereFormPage(id: id);
+              },
+            ),
+
+            // --- ROUTE MODULES ---
+            GoRoute(
+              path: '/admin/modules',
+              builder: (context, state) => const ModuleListPage(),
+            ),
+            GoRoute(
+              path: '/admin/modules/new',
+              builder: (context, state) => const ModuleFormPage(id: null),
+            ),
+            GoRoute(
+              path: '/admin/modules/edit/:id',
+              builder: (context, state) {
+                final id = int.tryParse(state.pathParameters['id'] ?? '');
+                return ModuleFormPage(id: id);
               },
             ),
 

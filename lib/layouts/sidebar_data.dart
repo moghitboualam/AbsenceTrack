@@ -102,6 +102,11 @@ class SidebarData {
             url: "/admin/filieres",
           ),
           SidebarItem(
+            title: "Modules",
+            icon: LucideIcons.bookOpen,
+            url: "/admin/modules",
+          ),
+          SidebarItem(
             title: "Blocs",
             icon: LucideIcons.box,
             url: "/admin/blocs",

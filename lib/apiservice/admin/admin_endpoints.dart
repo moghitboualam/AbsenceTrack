@@ -45,7 +45,11 @@
   static String filiereDelete(dynamic id) => '$filiereBase/$id';
 
   static const String moduleBase = '/admin/modules';
+  static const String moduleGetAll = moduleBase;
+  static const String moduleCreate = moduleBase;
   static String moduleGetById(dynamic id) => '$moduleBase/$id';
+  static String moduleUpdate(dynamic id) => '$moduleBase/$id';
+  static String moduleDelete(dynamic id) => '$moduleBase/$id';
 
   // ===========================================================================
   // CLASSES
