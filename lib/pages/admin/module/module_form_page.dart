@@ -113,9 +113,23 @@ class _ModuleFormPageState extends State<ModuleFormPage> {
       orElse: () => FiliereDto(id: -1),
     );
 
-    if (filiere.id != -1 && filiere.semistere != null && filiere.semistere!.isNotEmpty) {
+    if (filiere.id != -1) {
       setState(() {
-        _availableSemestres = filiere.semistere!.split(',');
+        if (filiere.dureeAnnees == 2) {
+           // Cycle Préparatoire
+           _availableSemestres = ['S1', 'S2', 'S3', 'S4'];
+        } else if (filiere.dureeAnnees == 3) {
+           // Cycle Ingénieur
+           _availableSemestres = ['S5', 'S6', 'S7', 'S8', 'S9', 'S10'];
+        } else {
+           // Fallback (e.g. 1 year or other)
+           if (filiere.semistere != null && filiere.semistere!.isNotEmpty) {
+              _availableSemestres = filiere.semistere!.split(',');
+           } else {
+              _availableSemestres = [];
+           }
+        }
+
         // Reset selection if not in new list
         if (_selectedSemestre != null && !_availableSemestres.contains(_selectedSemestre)) {
           _selectedSemestre = null;

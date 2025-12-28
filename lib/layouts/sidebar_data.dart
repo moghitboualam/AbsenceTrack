@@ -107,6 +107,16 @@ class SidebarData {
             url: "/admin/modules",
           ),
           SidebarItem(
+            title: "Promotions",
+            icon: LucideIcons.graduationCap,
+            url: "/admin/promotions",
+          ),
+          SidebarItem(
+            title: "Planification",
+            icon: LucideIcons.calendarCheck,
+            url: "/admin/module-promotions",
+          ),
+          SidebarItem(
             title: "Blocs",
             icon: LucideIcons.box,
             url: "/admin/blocs",

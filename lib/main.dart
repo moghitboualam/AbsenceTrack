@@ -24,6 +24,9 @@ import 'pages/admin/filiere/filiere_list_page.dart';
 import 'pages/admin/filiere/filiere_form_page.dart';
 import 'pages/admin/module/module_list_page.dart';
 import 'pages/admin/module/module_form_page.dart';
+import 'pages/admin/promotion/promotion_list_page.dart';
+import 'pages/admin/promotion/promotion_form_page.dart';
+import 'pages/admin/module_promotion/module_promotion_list_page.dart';
 import 'pages/etudiant/etudiant_dashboard_page.dart';
 import 'pages/etudiant/emploi_du_temps_list_page.dart';
 import 'pages/etudiant/emploi_du_temps_detail_page.dart';
@@ -209,6 +212,29 @@ class _MyAppState extends State<MyApp> {
                 final id = int.tryParse(state.pathParameters['id'] ?? '');
                 return ModuleFormPage(id: id);
               },
+            ),
+
+            // --- ROUTE PROMOTIONS ---
+            GoRoute(
+              path: '/admin/promotions',
+              builder: (context, state) => const PromotionListPage(),
+            ),
+            GoRoute(
+              path: '/admin/promotions/new',
+              builder: (context, state) => const PromotionFormPage(id: null),
+            ),
+            GoRoute(
+              path: '/admin/promotions/edit/:id',
+              builder: (context, state) {
+                final id = int.tryParse(state.pathParameters['id'] ?? '');
+                return PromotionFormPage(id: id);
+              },
+            ),
+
+            // --- ROUTE MODULE PROMOTIONS (PLANIFICATION) ---
+            GoRoute(
+              path: '/admin/module-promotions',
+              builder: (context, state) => const ModulePromotionListPage(),
             ),
 
             // --- ROUTE BLOCS ---

@@ -42,8 +42,8 @@ class _FiliereFormPageState extends State<FiliereFormPage> {
   int? _selectedDuree; // 1 or 2
   List<String> _selectedSemestres = [];
 
-  final List<String> _semestresAnnee1 = ['S1', 'S2', 'S3', 'S4', 'S5', 'S6'];
-  final List<String> _semestresAnnee2 = ['S7', 'S8', 'S9', 'S10'];
+  final List<String> _semestresPreparatoire = ['S1', 'S2', 'S3', 'S4'];
+  final List<String> _semestresIngenieur = ['S5', 'S6', 'S7', 'S8', 'S9', 'S10'];
 
   @override
   void initState() {
@@ -210,8 +210,8 @@ class _FiliereFormPageState extends State<FiliereFormPage> {
                                 prefixIcon: Icon(Icons.timer),
                               ),
                               items: const [
-                                DropdownMenuItem(value: 1, child: Text("1 an (Cycle Ingénieur)")),
-                                DropdownMenuItem(value: 2, child: Text("2 ans (Cycle Master)")),
+                                DropdownMenuItem(value: 2, child: Text("2 ans (Cycle Préparatoire)")),
+                                DropdownMenuItem(value: 3, child: Text("3 ans (Cycle Ingénieur)")),
                               ],
                               onChanged: (val) {
                                 setState(() {
@@ -230,7 +230,7 @@ class _FiliereFormPageState extends State<FiliereFormPage> {
                               Wrap(
                                 spacing: 10,
                                 runSpacing: 10,
-                                children: (_selectedDuree == 1 ? _semestresAnnee1 : _semestresAnnee2).map((semestre) {
+                                children: (_selectedDuree == 2 ? _semestresPreparatoire : _semestresIngenieur).map((semestre) {
                                   final isSelected = _selectedSemestres.contains(semestre);
                                   return FilterChip(
                                     label: Text(semestre),

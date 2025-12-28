@@ -86,28 +86,30 @@
   // PROMOTIONS
   // ===========================================================================
   static const String promotionBase = '/admin/promotions';
+  static const String promotionGetAll = promotionBase;
+  static const String promotionCreate = promotionBase;
+  static String promotionGetById(dynamic id) => '$promotionBase/$id';
+  static String promotionUpdate(dynamic id) => '$promotionBase/$id';
+  static String promotionDelete(dynamic id) => '$promotionBase/$id';
+
   static String promotionByFiliere(dynamic id) =>
       '$promotionBase/byFiliere/$id';
   static String promotionByAnnee(dynamic id) =>
       '$promotionBase/byAnneeUniversitaire/$id';
 
   // ===========================================================================
-  // INSCRIPTION
-  // ===========================================================================
-  static const String inscriptionBase = '/admin/inscriptions';
-  static const String inscriptionAuto = '$inscriptionBase/auto';
-  static const String inscriptionEnroll = '$inscriptionBase/etudiant-enroll';
-  static String inscriptionByPromotion(dynamic id) =>
-      '$inscriptionBase/byPromotion/$id';
-
-  // ===========================================================================
   // MODULE PROMOTION (Logique de liaison)
   // ===========================================================================
-  static String modulePromoByPromotion(dynamic promoId) =>
-      '/admin/module-promotions/promotion/$promoId';
+  static const String modulePromoBase = '/admin/module-promotions';
+
+  static String modulePromoGenerate(dynamic promoId) =>
+      '$modulePromoBase/promotion/$promoId';
 
   static String modulePromoByPromoAndSemestre(dynamic promoId, dynamic semId) =>
-      '/admin/module-promotions/promotion/$promoId/semestre/$semId';
+      '$modulePromoBase/promotion/$promoId/semestre/$semId';
+
+  static String modulePromoAssignEnseignant(dynamic modulePromoId) =>
+      '$modulePromoBase/$modulePromoId/assign-enseignant';
 
   // ===========================================================================
   // EMPLOI DU TEMPS
