@@ -38,7 +38,11 @@
   // FILIERE & MODULE
   // ===========================================================================
   static const String filiereBase = '/admin/filieres';
+  static const String filiereGetAll = filiereBase;
+  static const String filiereCreate = filiereBase;
   static String filiereGetById(dynamic id) => '$filiereBase/$id';
+  static String filiereUpdate(dynamic id) => '$filiereBase/$id';
+  static String filiereDelete(dynamic id) => '$filiereBase/$id';
 
   static const String moduleBase = '/admin/modules';
   static String moduleGetById(dynamic id) => '$moduleBase/$id';

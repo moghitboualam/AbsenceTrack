@@ -20,7 +20,8 @@ import 'pages/admin/bloc/bloc_list_page.dart';
 import 'pages/admin/bloc/bloc_form_page.dart';
 import 'pages/admin/salle/salle_list_page.dart';
 import 'pages/admin/salle/salle_form_page.dart';
-import 'pages/admin/filiere_list_page.dart';
+import 'pages/admin/filiere/filiere_list_page.dart';
+import 'pages/admin/filiere/filiere_form_page.dart';
 import 'pages/etudiant/etudiant_dashboard_page.dart';
 import 'pages/etudiant/emploi_du_temps_list_page.dart';
 import 'pages/etudiant/emploi_du_temps_detail_page.dart';
@@ -176,8 +177,19 @@ class _MyAppState extends State<MyApp> {
               },
             ),
             GoRoute(
-              path: '/admin/filiere',
+              path: '/admin/filieres',
               builder: (context, state) => const FiliereListPage(),
+            ),
+            GoRoute(
+              path: '/admin/filieres/new',
+              builder: (context, state) => const FiliereFormPage(id: null),
+            ),
+            GoRoute(
+              path: '/admin/filieres/edit/:id',
+              builder: (context, state) {
+                final id = int.tryParse(state.pathParameters['id'] ?? '');
+                return FiliereFormPage(id: id);
+              },
             ),
 
             // --- ROUTE BLOCS ---

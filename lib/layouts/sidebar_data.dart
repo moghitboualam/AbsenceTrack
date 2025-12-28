@@ -99,7 +99,7 @@ class SidebarData {
           SidebarItem(
             title: "Filières",
             icon: LucideIcons.school,
-            url: "/admin/filiere",
+            url: "/admin/filieres",
           ),
           SidebarItem(
             title: "Blocs",
