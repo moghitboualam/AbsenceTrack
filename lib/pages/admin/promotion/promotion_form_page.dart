@@ -132,9 +132,9 @@ class _PromotionFormPageState extends State<PromotionFormPage> {
       try {
         final f = _filieres.firstWhere((element) => element.id == _selectedFiliereId, orElse: () => _filieres.first);
         duration = f.dureeAnnees ?? 3;
-        print(f.dureeAnnees);
-        
-      } catch (e) {}
+      } catch (e) {
+        // Silent catch is acceptable here as it's just trying to set a default duration from a list
+      }
     }
 
     if (duration == 2) {

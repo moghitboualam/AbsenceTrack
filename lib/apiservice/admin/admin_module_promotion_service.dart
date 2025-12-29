@@ -9,7 +9,6 @@ class AdminModulePromotionService {
   Future<void> generateModulesForPromotion(int promotionId) async {
     try {
       final request = await _dio.post(AdminEndpoints.modulePromoGenerate(promotionId), options: Options(contentType: Headers.jsonContentType));
-      print("Modules generated for promotion $promotionId");
     } catch (e) {
       throw _handleError(e);
     }
@@ -23,7 +22,6 @@ class AdminModulePromotionService {
       final response = await _dio.get(
         AdminEndpoints.modulePromoByPromoAndSemestre(promotionId, semestreId),
       );
-      print("Modules fetched for promotion $promotionId and semester $semestreId");
       return (response.data as List)
           .map((e) => ModulePromotionDto.fromJson(e))
           .toList();
@@ -46,7 +44,6 @@ class AdminModulePromotionService {
           contentType: Headers.jsonContentType, // Ensure it sends as JSON number if needed, or text
         ),
       );
-      print("Enseignant assigned to module $modulePromotionId");
     } catch (e) {
       throw _handleError(e);
     }

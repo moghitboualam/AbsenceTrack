@@ -24,15 +24,11 @@ class EnvService {
     try {
       if (kIsWeb) {
         // For web, we need to handle differently
-        print('Running on web - using default environment variables');
       } else {
         await dotenv.load(fileName: ".env");
       }
-      print('Connexion à l\'API: $apiUrl');
     } catch (e) {
-      print('Erreur lors du chargement du fichier .env: $e');
       // Use default values if .env file is not found
-      print('Using default environment variables');
     }
   }
 }

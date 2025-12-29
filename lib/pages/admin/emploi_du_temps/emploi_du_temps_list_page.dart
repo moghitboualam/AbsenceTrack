@@ -7,6 +7,9 @@ import 'package:flutter_dashboard_app/apiservice/admin/admin_emploi_du_temps_ser
 import 'package:flutter_dashboard_app/dto/emploi_du_temps/emploi_du_temps_dto.dart';
 import 'package:flutter_dashboard_app/main.dart';
 import 'package:lucide_icons/lucide_icons.dart';
+import 'package:flutter_dashboard_app/apiservice/admin/admin_classes_service.dart';
+import 'package:flutter_dashboard_app/dto/classes/classes_dto.dart';
+
 
 class AdminEmploiDuTempsListPage extends StatefulWidget {
   const AdminEmploiDuTempsListPage({super.key});
@@ -15,17 +18,38 @@ class AdminEmploiDuTempsListPage extends StatefulWidget {
   State<AdminEmploiDuTempsListPage> createState() => _AdminEmploiDuTempsListPageState();
 }
 
+
 class _AdminEmploiDuTempsListPageState extends State<AdminEmploiDuTempsListPage> {
   final AdminEmploiDuTempsService _service = AdminEmploiDuTempsService();
+  final AdminClassesService _classesService = AdminClassesService();
 
   List<EmploiDuTempsDto> _emploisDuTemps = [];
+  List<ClassesDto> _classes = [];
   bool _isLoading = true;
   String? _errorMessage;
+
+  // Filters
+  String _searchQuery = "";
+  int? _selectedClasseId;
 
   @override
   void initState() {
     super.initState();
+    _fetchClasses();
     _fetchEmploisDuTemps();
+  }
+  
+  Future<void> _fetchClasses() async {
+    try {
+      final data = await _classesService.getAllClasses(page: 0, size: 100);
+      if (mounted) {
+        setState(() {
+           _classes = (data['content'] as List).map((e) => ClassesDto.fromJson(e)).toList();
+        });
+      }
+    } catch(e) {
+      if (mounted) _showSnackBar("Erreur loading classes: $e", isError: true);
+    }
   }
 
   Future<void> _fetchEmploisDuTemps() async {
@@ -46,6 +70,15 @@ class _AdminEmploiDuTempsListPageState extends State<AdminEmploiDuTempsListPage>
         _errorMessage = e.toString();
       });
     }
+  }
+
+  List<EmploiDuTempsDto> get _filteredList {
+      return _emploisDuTemps.where((e) {
+          bool matchSearch = (e.nom?.toLowerCase().contains(_searchQuery.toLowerCase()) ?? false) ||
+                             (e.classeCode?.toLowerCase().contains(_searchQuery.toLowerCase()) ?? false);
+          bool matchClass = _selectedClasseId == null || e.classeId == _selectedClasseId;
+          return matchSearch && matchClass;
+      }).toList();
   }
 
   Future<void> _handleDelete(int id) async {
@@ -134,9 +167,56 @@ class _AdminEmploiDuTempsListPageState extends State<AdminEmploiDuTempsListPage>
           ? const Center(child: CircularProgressIndicator())
           : _errorMessage != null
           ? Center(child: Text("Erreur: $_errorMessage", style: const TextStyle(color: Colors.red)))
-          : _emploisDuTemps.isEmpty
-          ? const Center(child: Text("Aucun emploi du temps trouvé."))
-          : _buildList(),
+          : Column(
+              children: [
+                   // Filters
+                   Container(
+                       padding: const EdgeInsets.all(16),
+                       color: Colors.white,
+                       child: Column(
+                         children: [
+                           Row(
+                             children: [
+                               Expanded(
+                                 child: TextField(
+                                   decoration: const InputDecoration(
+                                     labelText: "Rechercher (Nom, Classe)",
+                                     prefixIcon: Icon(Icons.search),
+                                     border: OutlineInputBorder(),
+                                   ),
+                                   onChanged: (val) => setState(() => _searchQuery = val),
+                                 ),
+                               ),
+                               const SizedBox(width: 16),
+                               SizedBox(
+                                 width: 200,
+                                 child: DropdownButtonFormField<int>(
+                                   value: _selectedClasseId,
+                                   decoration: const InputDecoration(
+                                     labelText: "Classe",
+                                     border: OutlineInputBorder(),
+                                     contentPadding: EdgeInsets.symmetric(horizontal: 10),
+                                   ),
+                                   items: [
+                                     const DropdownMenuItem(value: null, child: Text("Toutes")),
+                                     ..._classes.map((c) => DropdownMenuItem(value: c.id, child: Text(c.code ?? 'Classe #${c.id}'))),
+                                   ],
+                                   onChanged: (val) => setState(() => _selectedClasseId = val),
+                                 ),
+                               ),
+                             ],
+                           ),
+                         ],
+                       ),
+                   ),
+                   const Divider(height: 1),
+                   Expanded(
+                     child: _filteredList.isEmpty
+                     ? const Center(child: Text("Aucun emploi du temps trouvé."))
+                     : _buildList(_filteredList),
+                   ),
+              ]
+          ),
       floatingActionButton: FloatingActionButton.extended(
         onPressed: _navToCreate,
         label: const Text("Ajouter"),
@@ -145,12 +225,12 @@ class _AdminEmploiDuTempsListPageState extends State<AdminEmploiDuTempsListPage>
     );
   }
 
-  Widget _buildList() {
+  Widget _buildList(List<EmploiDuTempsDto> items) {
     return ListView.builder(
       padding: const EdgeInsets.all(16),
-      itemCount: _emploisDuTemps.length,
+      itemCount: items.length,
       itemBuilder: (context, index) {
-        final edt = _emploisDuTemps[index];
+        final edt = items[index];
         return Card(
           margin: const EdgeInsets.only(bottom: 12),
           child: ListTile(

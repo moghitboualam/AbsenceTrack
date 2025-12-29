@@ -94,7 +94,6 @@ class _PromotionClassesPageState extends State<PromotionClassesPage> {
         });
       } catch (e) {
         // Fallback or error
-        print("Error fetching students: $e");
          ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text("Erreur chargement étudiants: ${e.toString()}"), backgroundColor: Colors.red),
         );

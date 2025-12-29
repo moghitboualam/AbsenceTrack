@@ -43,8 +43,7 @@ class AuthService extends ChangeNotifier {
     _error = null;
     _loading = true;
     notifyListeners();
-    // print('Tentative de connexion pour l\'utilirsateur: $username');
-    print('Avec le mot de passe: $password');
+
     try {
       final response = await _apiService.dio.post(
         '/auth/login',

@@ -58,7 +58,6 @@ class AdminEnseignantService {
   ) async {
     try {
       final response = await _dio.put('$_basePath/$id', data: request.toJson());
-      print('$_basePath/$id');
       return EnseignantDto.fromJson(response.data);
     } catch (e) {
       throw _handleServiceError(e);

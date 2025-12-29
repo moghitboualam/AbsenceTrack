@@ -176,7 +176,6 @@ class _ModuleListPageState extends State<ModuleListPage> {
       itemCount: _modules.length,
       itemBuilder: (context, index) {
         final mod = _modules[index];
-        print("module: ${mod.toJson()}");
         return Card(
           elevation: 2,
           margin: const EdgeInsets.only(bottom: 12),

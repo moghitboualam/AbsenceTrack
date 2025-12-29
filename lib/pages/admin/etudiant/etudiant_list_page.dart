@@ -6,6 +6,9 @@ import 'package:go_router/go_router.dart';
 import '../../../dto/etudiant/etudiant_dto.dart';
 import '../../../apiservice/admin/admin_etudiant_service.dart';
 
+import '../../../dto/classes/classes_dto.dart';
+import '../../../apiservice/admin/admin_classes_service.dart';
+
 class EtudiantListPage extends StatefulWidget {
   const EtudiantListPage({super.key});
 
@@ -15,34 +18,64 @@ class EtudiantListPage extends StatefulWidget {
 
 class _EtudiantListPageState extends State<EtudiantListPage> {
   final AdminEtudiantService _service = AdminEtudiantService();
+  final AdminClassesService _classesService = AdminClassesService();
 
   List<EtudiantDto> _etudiants = [];
+  List<ClassesDto> _classes = [];
   bool _isLoading = true;
   bool _isImporting = false;
   int _currentPage = 0;
   int _totalPages = 1;
   final int _pageSize = 10;
+  
+  // Filters
+  int? _selectedClasseId;
+  String _searchQuery = "";
+  final TextEditingController _searchController = TextEditingController();
 
   @override
   void initState() {
     super.initState();
+    _fetchClasses();
     _fetchEtudiants();
   }
 
   // --- LOGIQUE MÉTIER ---
+  
+  Future<void> _fetchClasses() async {
+    try {
+      final data = await _classesService.getAllClasses(page: 0, size: 100);
+      setState(() {
+         _classes = (data['content'] as List).map((e) => ClassesDto.fromJson(e)).toList();
+      });
+    } catch(e) {
+      if (mounted) _showSnackBar("Erreur chargement classes: $e", isError: true);
+    }
+  }
 
-  Future<void> _fetchEtudiants() async {
+  Future<void> _fetchEtudiants() async { 
     setState(() => _isLoading = true);
     try {
-      final response = await _service.getAllEtudiants(
-        page: _currentPage,
-        size: _pageSize,
-      );
-      setState(() {
-        _etudiants = List<EtudiantDto>.from(response['students']);
-        _totalPages = response['totalPages'] ?? 1;
-        _isLoading = false;
-      });
+      if (_selectedClasseId != null) {
+        // Filter by Class (Fetch All)
+        final students = await _service.getEtudiantsByClasseId(_selectedClasseId!);
+        setState(() {
+          _etudiants = students;
+          _totalPages = 1; // No pagination for single class view usually
+          _isLoading = false;
+        });
+      } else {
+        // Default Paginated Fetch
+        final response = await _service.getAllEtudiants(
+          page: _currentPage,
+          size: _pageSize,
+        );
+        setState(() {
+          _etudiants = List<EtudiantDto>.from(response['students']);
+          _totalPages = response['totalPages'] ?? 1;
+          _isLoading = false;
+        });
+      }
     } catch (e) {
       _showSnackBar(
         "Erreur lors du chargement: ${e.toString()}",
@@ -50,6 +83,18 @@ class _EtudiantListPageState extends State<EtudiantListPage> {
       );
       setState(() => _isLoading = false);
     }
+  }
+  
+  List<EtudiantDto> get _displayedEtudiants {
+      if (_searchQuery.isEmpty) return _etudiants;
+      final query = _searchQuery.toLowerCase();
+      return _etudiants.where((s) {
+          final nom = s.nom?.toLowerCase() ?? '';
+          final prenom = s.prenom?.toLowerCase() ?? '';
+          final email = s.email?.toLowerCase() ?? '';
+          final code = s.codeMassar?.toLowerCase() ?? '';
+          return nom.contains(query) || prenom.contains(query) || email.contains(query) || code.contains(query);
+      }).toList();
   }
 
   Future<void> _handleExcelImport() async {
@@ -193,9 +238,51 @@ class _EtudiantListPageState extends State<EtudiantListPage> {
           ? const Center(child: CircularProgressIndicator())
           : Column(
               children: [
+                // Filter Section
+                Container(
+                    padding: const EdgeInsets.all(16),
+                    color: Colors.white,
+                    child: Row(
+                        children: [
+                            Expanded(child: TextField(
+                                controller: _searchController,
+                                decoration: const InputDecoration(
+                                    labelText: "Rechercher (Nom, Email, Massar)",
+                                    prefixIcon: Icon(Icons.search),
+                                    border: OutlineInputBorder(),
+                                ),
+                                onChanged: (val) => setState(() => _searchQuery = val),
+                            )),
+                            const SizedBox(width: 16),
+                            SizedBox(
+                                width: 200,
+                                child: DropdownButtonFormField<int>(
+                                    value: _selectedClasseId,
+                                    decoration: const InputDecoration(
+                                        labelText: "Filtrer par Classe",
+                                        border: OutlineInputBorder(),
+                                        contentPadding: EdgeInsets.symmetric(horizontal: 10, vertical: 0),
+                                    ),
+                                    items: [
+                                        const DropdownMenuItem<int>(value: null, child: Text("Toutes les classes")),
+                                        ..._classes.map((c) => DropdownMenuItem(value: c.id, child: Text(c.code ?? 'Classe #${c.id}'))),
+                                    ],
+                                    onChanged: (val) {
+                                        setState(() {
+                                            _selectedClasseId = val;
+                                            _currentPage = 0; // Reset page
+                                        });
+                                        _fetchEtudiants();
+                                    },
+                                ),
+                            ),
+                        ],
+                    ),
+                ),
+                
                 // Zone de contenu principale (Liste ou Tableau)
                 Expanded(
-                  child: _etudiants.isEmpty
+                  child: _displayedEtudiants.isEmpty
                       ? const Center(
                           child: Text(
                             "Aucun étudiant trouvé",
@@ -215,8 +302,8 @@ class _EtudiantListPageState extends State<EtudiantListPage> {
                         ),
                 ),
 
-                // Zone de pagination (commune aux deux vues)
-                if (_etudiants.isNotEmpty)
+                // Zone de pagination (commune aux deux vues) - ONLY SHOW IF NO CLASS FILTER
+                if (_displayedEtudiants.isNotEmpty && _selectedClasseId == null)
                   Container(
                     padding: const EdgeInsets.symmetric(
                       horizontal: 16.0,
@@ -277,12 +364,12 @@ class _EtudiantListPageState extends State<EtudiantListPage> {
 
   // --- VUE MOBILE : LISTE DE CARTES ---
   Widget _buildMobileListView() {
+    final displayed = _displayedEtudiants;
     return ListView.builder(
       padding: const EdgeInsets.all(12),
-      itemCount: _etudiants.length,
+      itemCount: displayed.length,
       itemBuilder: (context, index) {
-        final etudiant = _etudiants[index];
-        print(etudiant.toJson());
+        final etudiant = displayed[index];
         return Card(
           elevation: 2,
           shape: RoundedRectangleBorder(
@@ -441,7 +528,7 @@ class _EtudiantListPageState extends State<EtudiantListPage> {
                 ),
               ),
             ],
-            rows: _etudiants.asMap().entries.map((entry) {
+            rows: _displayedEtudiants.asMap().entries.map((entry) {
               final index = entry.key;
               final etudiant = entry.value;
               return DataRow(

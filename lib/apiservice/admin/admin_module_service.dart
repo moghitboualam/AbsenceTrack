@@ -53,8 +53,6 @@ class AdminModuleService {
         AdminEndpoints.moduleUpdate(id),
         data: request.toJson(),
       );
-      print("response.data: ${response.data}");
-      print("request.data: ${request.toJson()}");
       return ModuleDto.fromJson(response.data);
     } catch (e) {
       throw _handleError(e);

@@ -19,7 +19,7 @@ class _EnseignantListPageState extends State<EnseignantListPage> {
   bool _isLoading = true;
   int _currentPage = 0;
   int _totalPages = 0;
-  final int _pageSize = 10;
+  final int _pageSize = 100; // Increased for better client-side filtering
 
   // Filtres
   String _searchQuery = "";

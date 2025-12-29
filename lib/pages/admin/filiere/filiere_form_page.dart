@@ -94,11 +94,6 @@ class _FiliereFormPageState extends State<FiliereFormPage> {
         } else {
            _selectedSemestres = [];
         }
-        print("JSON DATA: ${data.toJson()}");
-        print("selectedDepartementId: $_selectedDepartementId");
-        print("selectedChefId: $_selectedChefId");
-        print("selectedDuree: $_selectedDuree");
-        print("selectedSemestres: $_selectedSemestres");
       }
     } catch (e) {
       _showSnackBar("Erreur chargement: ${e.toString()}", isError: true);
@@ -125,7 +120,6 @@ class _FiliereFormPageState extends State<FiliereFormPage> {
 
     try {
       if (widget.id != null) {
-        print("JSON DATA: ${request.toJson()}");
         await _filiereService.updateFiliere(widget.id!, request);
         _showSnackBar("Filière mise à jour");
       } else {

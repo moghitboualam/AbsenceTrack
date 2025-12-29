@@ -63,7 +63,6 @@ class _EtudiantFormPageState extends State<EtudiantFormPage> {
     try {
       // Adaptez cette méthode selon ce que retourne votre API (Map ou DTO)
       final data = await _service.getEtudiantById(widget.id!);
-      print(data);
       setState(() {
         _nomController.text = data.nom ?? '';
         _prenomController.text = data.prenom ?? '';

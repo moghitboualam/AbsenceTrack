@@ -54,7 +54,6 @@ class _AdminHomePageState extends State<AdminHomePage> {
       if (mounted) {
         setState(() => _isLoading = false);
         // Silently fail or show simple error in UI, dashboard should arguably be resilient
-        print("Error loading stats: $e"); 
       }
     }
   }
