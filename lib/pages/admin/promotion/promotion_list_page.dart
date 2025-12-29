@@ -117,6 +117,14 @@ class _PromotionListPageState extends State<PromotionListPage> {
     if (result == true) _fetchPromotions();
   }
 
+  void _navToClasses(int id, String code) {
+    context.push('/admin/promotions/$id/classes', extra: code);
+  }
+
+  void _navToInscriptions(int id, String code) {
+    context.push('/admin/promotions/$id/inscriptions', extra: code);
+  }
+
   void _navToEdit(int id) async {
     final result = await context.push('/admin/promotions/edit/$id');
     if (result == true) _fetchPromotions();
@@ -200,10 +208,32 @@ class _PromotionListPageState extends State<PromotionListPage> {
                     PopupMenuButton<String>(
                       icon: const Icon(Icons.more_horiz),
                       onSelected: (val) {
+                        if (val == 'inscriptions') _navToInscriptions(promo.id, promo.codePromotion);
+                        if (val == 'classes') _navToClasses(promo.id, promo.codePromotion);
                         if (val == 'edit') _navToEdit(promo.id);
                         if (val == 'delete') _handleDelete(promo.id);
                       },
                       itemBuilder: (context) => [
+                        const PopupMenuItem(
+                          value: 'inscriptions',
+                          child: Row(
+                            children: [
+                              Icon(Icons.person_add_alt_1, size: 16, color: Colors.orange),
+                              SizedBox(width: 8),
+                              Text("Inscriptions"),
+                            ],
+                          ),
+                        ),
+                        const PopupMenuItem(
+                          value: 'classes',
+                          child: Row(
+                            children: [
+                              Icon(Icons.groups, size: 16, color: Colors.green),
+                              SizedBox(width: 8),
+                              Text("Classes"),
+                            ],
+                          ),
+                        ),
                         const PopupMenuItem(
                           value: 'edit',
                           child: Row(
@@ -270,6 +300,16 @@ class _PromotionListPageState extends State<PromotionListPage> {
                     Row(
                       mainAxisSize: MainAxisSize.min,
                       children: [
+                        IconButton(
+                          icon: const Icon(Icons.person_add_alt_1, color: Colors.orange, size: 20),
+                          tooltip: "Gérer les inscriptions",
+                          onPressed: () => _navToInscriptions(promo.id, promo.codePromotion),
+                        ),
+                        IconButton(
+                          icon: const Icon(Icons.groups, color: Colors.green, size: 20),
+                          tooltip: "Gérer les classes",
+                          onPressed: () => _navToClasses(promo.id, promo.codePromotion),
+                        ),
                         IconButton(
                           icon: const Icon(Icons.edit, color: Colors.blue, size: 20),
                           tooltip: "Modifier",

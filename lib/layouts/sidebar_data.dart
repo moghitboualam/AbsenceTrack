@@ -117,6 +117,11 @@ class SidebarData {
             url: "/admin/module-promotions",
           ),
           SidebarItem(
+            title: "Emplois du temps",
+            icon: LucideIcons.calendar,
+            url: "/admin/emploi-du-temps",
+          ),
+          SidebarItem(
             title: "Blocs",
             icon: LucideIcons.box,
             url: "/admin/blocs",

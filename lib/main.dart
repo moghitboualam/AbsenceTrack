@@ -26,6 +26,8 @@ import 'pages/admin/module/module_list_page.dart';
 import 'pages/admin/module/module_form_page.dart';
 import 'pages/admin/promotion/promotion_list_page.dart';
 import 'pages/admin/promotion/promotion_form_page.dart';
+import 'pages/admin/classes/promotion_classes_page.dart';
+import 'pages/admin/inscription/promotion_inscriptions_page.dart';
 import 'pages/admin/module_promotion/module_promotion_list_page.dart';
 import 'pages/etudiant/etudiant_dashboard_page.dart';
 import 'pages/etudiant/emploi_du_temps_list_page.dart';
@@ -34,6 +36,9 @@ import 'pages/etudiant/emploi_du_temps_pdf_view_page.dart';
 import 'pages/etudiant/student_placeholder_pages.dart'; // Import pages placeholders
 import 'pages/enseignant/enseignant_dashboard_page.dart';
 import 'pages/enseignant/emploi_du_temps_page.dart';
+import 'pages/admin/emploi_du_temps/emploi_du_temps_list_page.dart';
+import 'pages/admin/emploi_du_temps/emploi_du_temps_form_page.dart';
+import 'pages/admin/emploi_du_temps/emploi_du_temps_manage_page.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -230,6 +235,24 @@ class _MyAppState extends State<MyApp> {
                 return PromotionFormPage(id: id);
               },
             ),
+            GoRoute(
+              path: '/admin/promotions/:id/classes',
+              builder: (context, state) {
+                final id = int.tryParse(state.pathParameters['id'] ?? '');
+                final code = state.extra as String?;
+                if (id == null) return const Scaffold(body: Center(child: Text("ID Invalide")));
+                return PromotionClassesPage(promotionId: id, promotionCode: code);
+              },
+            ),
+            GoRoute(
+              path: '/admin/promotions/:id/inscriptions',
+              builder: (context, state) {
+                final id = int.tryParse(state.pathParameters['id'] ?? '');
+                final code = state.extra as String?;
+                if (id == null) return const Scaffold(body: Center(child: Text("ID Invalide")));
+                return PromotionInscriptionsPage(promotionId: id, promotionCode: code);
+              },
+            ),
 
             // --- ROUTE MODULE PROMOTIONS (PLANIFICATION) ---
             GoRoute(
@@ -287,6 +310,30 @@ class _MyAppState extends State<MyApp> {
             GoRoute(
               path: '/enseignant/edt',
               builder: (context, state) => const EnseignantEmploiDuTempsPage(),
+            ),
+
+            // --- ROUTES ADMIN EMPLOI DU TEMPS ---
+            GoRoute(
+              path: '/admin/emploi-du-temps',
+              builder: (context, state) => const AdminEmploiDuTempsListPage(),
+            ),
+            GoRoute(
+              path: '/admin/emploi-du-temps/new',
+              builder: (context, state) => const AdminEmploiDuTempsFormPage(id: null),
+            ),
+            GoRoute(
+              path: '/admin/emploi-du-temps/edit/:id',
+              builder: (context, state) {
+                 final id = int.tryParse(state.pathParameters['id'] ?? '');
+                 return AdminEmploiDuTempsFormPage(id: id);
+              },
+            ),
+            GoRoute(
+              path: '/admin/emploi-du-temps/:id/manage',
+              builder: (context, state) {
+                 final id = int.tryParse(state.pathParameters['id'] ?? '');
+                 return AdminEmploiDuTempsManagePage(id: id ?? 0);
+              },
             ),
 
             // --- ROUTES ETUDIANT ---

@@ -15,7 +15,7 @@
   static String etudiantGetByClasse(dynamic classeId) =>
       '$etudiantBase/$classeId/etudiants';
   // ===========================================================================
-  // ETUDIANT
+  // DEPARTEMENT
   // ===========================================================================
   static const String departementBase = '/admin/departements';
   static const String departementGetAll = departementBase;
@@ -115,6 +115,11 @@
   // EMPLOI DU TEMPS
   // ===========================================================================
   static const String edtBase = '/admin/emploidutemps';
+  static const String edtGetAll = edtBase;
+  static const String edtCreate = edtBase;
+  static String edtUpdate(dynamic id) => '$edtBase/$id';
+  static String edtDelete(dynamic id) => '$edtBase/$id';
+
   static const String edtSeanceAdd = '$edtBase/seances';
 
   static String edtGetById(dynamic id) => '$edtBase/$id';

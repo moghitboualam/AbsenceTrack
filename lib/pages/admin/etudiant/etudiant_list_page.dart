@@ -282,6 +282,7 @@ class _EtudiantListPageState extends State<EtudiantListPage> {
       itemCount: _etudiants.length,
       itemBuilder: (context, index) {
         final etudiant = _etudiants[index];
+        print(etudiant.toJson());
         return Card(
           elevation: 2,
           shape: RoundedRectangleBorder(
