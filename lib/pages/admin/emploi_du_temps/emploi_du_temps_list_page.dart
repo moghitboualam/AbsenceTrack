@@ -74,7 +74,7 @@ class _AdminEmploiDuTempsListPageState extends State<AdminEmploiDuTempsListPage>
 
   List<EmploiDuTempsDto> get _filteredList {
       return _emploisDuTemps.where((e) {
-          bool matchSearch = (e.nom?.toLowerCase().contains(_searchQuery.toLowerCase()) ?? false) ||
+          bool matchSearch = (e.libelle?.toLowerCase().contains(_searchQuery.toLowerCase()) ?? false) ||
                              (e.classeCode?.toLowerCase().contains(_searchQuery.toLowerCase()) ?? false);
           bool matchClass = _selectedClasseId == null || e.classeId == _selectedClasseId;
           return matchSearch && matchClass;
@@ -234,14 +234,14 @@ class _AdminEmploiDuTempsListPageState extends State<AdminEmploiDuTempsListPage>
         return Card(
           margin: const EdgeInsets.only(bottom: 12),
           child: ListTile(
-            title: Text(edt.nom ?? "Sans nom", style: const TextStyle(fontWeight: FontWeight.bold)),
+            title: Text(edt.libelle ?? "Sans nom", style: const TextStyle(fontWeight: FontWeight.bold)),
             subtitle: Text("${edt.classeCode ?? '-'} | ${edt.semestreNum ?? '-'}"),
             trailing: Row(
               mainAxisSize: MainAxisSize.min,
               children: [
                 IconButton(
                   icon: const Icon(LucideIcons.fileText),
-                  onPressed: () => _handleDownload(edt.id!, edt.nom),
+                  onPressed: () => _handleDownload(edt.id!, edt.libelle),
                   tooltip: "PDF",
                 ),
                 IconButton(

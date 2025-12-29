@@ -2,7 +2,7 @@ import 'package:flutter_dashboard_app/dto/seance/seance_dto.dart';
 
 class EmploiDuTempsDto {
   final int? id;
-  final String? nom;
+  final String? libelle;
   final int? classeId;
   final int? promotionId;
   final String? classeCode;
@@ -12,7 +12,7 @@ class EmploiDuTempsDto {
 
   EmploiDuTempsDto({
     this.id,
-    this.nom,
+    this.libelle,
     this.classeId,
     this.promotionId,
     this.classeCode,
@@ -30,7 +30,7 @@ class EmploiDuTempsDto {
 
     return EmploiDuTempsDto(
       id: json['id'],
-      nom: json['nom'],
+      libelle: json['libelle'],
       classeId: json['classeId'],
       promotionId: json['promotionId'],
       classeCode: json['classeCode'],
@@ -43,7 +43,7 @@ class EmploiDuTempsDto {
   Map<String, dynamic> toJson() {
     return {
       'id': id,
-      'nom': nom,
+      'libelle': libelle,
       'classeId': classeId,
       'promotionId': promotionId,
       'classeCode': classeCode,

@@ -147,7 +147,7 @@ class _AdminEmploiDuTempsManagePageState extends State<AdminEmploiDuTempsManageP
 
     return Scaffold(
       appBar: AppBar(
-        title: Text("Gérer: ${_edt!.nom}"),
+        title: Text("Gérer: ${_edt!.libelle ?? 'Emploi Du Temps'}"),
         actions: [
             IconButton(
                 icon: const Icon(LucideIcons.refreshCw),
@@ -161,20 +161,23 @@ class _AdminEmploiDuTempsManagePageState extends State<AdminEmploiDuTempsManageP
             // Toolbar
             Padding(
                 padding: const EdgeInsets.all(16.0),
-                child: Row(
-                    children: [
-                        ElevatedButton.icon(
-                            onPressed: _showAddSeanceDialog,
-                            icon: const Icon(LucideIcons.plus),
-                            label: const Text("Ajouter Séance Manuelle"),
-                        ),
-                        const SizedBox(width: 12),
-                        OutlinedButton.icon(
-                            onPressed: _handleGenerate,
-                            icon: const Icon(LucideIcons.wand2),
-                            label: const Text("Générer Automatiquement"),
-                        ),
-                    ],
+                child: SingleChildScrollView(
+                  scrollDirection: Axis.horizontal,
+                  child: Row(
+                      children: [
+                          ElevatedButton.icon(
+                              onPressed: _showAddSeanceDialog,
+                              icon: const Icon(LucideIcons.plus),
+                              label: const Text("Ajouter Séance Manuelle"),
+                          ),
+                          const SizedBox(width: 12),
+                          OutlinedButton.icon(
+                              onPressed: _handleGenerate,
+                              icon: const Icon(LucideIcons.wand2),
+                              label: const Text("Générer Automatiquement"),
+                          ),
+                      ],
+                  ),
                 ),
             ),
             const Divider(),
@@ -267,8 +270,8 @@ class _AddSeanceDialogState extends State<_AddSeanceDialog> {
   Widget build(BuildContext context) {
     return AlertDialog(
       title: const Text("Ajouter une Séance"),
-      content: SizedBox(
-        width: 500,
+      content: ConstrainedBox(
+        constraints: const BoxConstraints(maxWidth: 500),
         child: SingleChildScrollView(
           child: Form(
             key: _formKey,

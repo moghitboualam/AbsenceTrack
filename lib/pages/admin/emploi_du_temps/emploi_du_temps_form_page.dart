@@ -59,7 +59,7 @@ class _AdminEmploiDuTempsFormPageState extends State<AdminEmploiDuTempsFormPage>
       // 2. If Editing, Load Existing Data
       if (widget.id != null) {
         final edt = await _edtService.getEmploiDuTempsById(widget.id!);
-        _nomController.text = edt.nom ?? '';
+        _nomController.text = edt.libelle ?? '';
         _selectedClasseId = edt.classeId;
         _selectedSemestreId = edt.semestreId;
       }
