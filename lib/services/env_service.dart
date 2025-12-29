@@ -4,7 +4,7 @@ import 'package:flutter/foundation.dart' show kIsWeb;
 class EnvService {
   static String get apiUrl {
     try {
-      return dotenv.env['VITE_API_URL'] ?? 'http://localhost:8080';
+      return dotenv.env['API_URL'] ?? 'http://localhost:8080';
     } catch (e) {
       // Return default value if dotenv is not initialized
       return 'http://localhost:8080';

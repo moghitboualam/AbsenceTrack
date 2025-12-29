@@ -70,11 +70,7 @@ class SidebarData {
         title: "Gestion Utilisateurs",
         icon: LucideIcons.userCog,
         items: [
-          SidebarItem(
-            title: "Departements",
-            icon: LucideIcons.graduationCap,
-            url: "/admin/departements",
-          ),
+          
           SidebarItem(
             title: "Enseignants",
             icon: LucideIcons.users,
