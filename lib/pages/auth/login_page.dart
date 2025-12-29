@@ -40,9 +40,11 @@ class _LoginPageState extends State<LoginPage> {
         _passwordController.text,
       );
     } catch (e) {
-      setState(() {
-        _errorMessage = context.read<AuthService>().error;
-      });
+      if (mounted) {
+        setState(() {
+          _errorMessage = context.read<AuthService>().error;
+        });
+      }
     } finally {
       if (mounted) setState(() => _isLoading = false);
     }

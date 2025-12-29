@@ -21,9 +21,14 @@ import 'pages/etudiant/etudiant_dashboard_page.dart';
 import 'pages/etudiant/emploi_du_temps_list_page.dart';
 import 'pages/etudiant/emploi_du_temps_detail_page.dart';
 import 'pages/etudiant/emploi_du_temps_pdf_view_page.dart';
-import 'pages/etudiant/student_placeholder_pages.dart'; // Import pages placeholders
+import 'pages/etudiant/mes_absences_page.dart';
+import 'pages/etudiant/mes_seances_page.dart';
+import 'pages/etudiant/mes_justifications_page.dart';
 import 'pages/enseignant/enseignant_dashboard_page.dart';
 import 'pages/enseignant/emploi_du_temps_page.dart';
+import 'pages/enseignant/enseignant_mes_seances_page.dart';
+import 'pages/enseignant/enseignant_seance_detail_page.dart';
+import 'pages/enseignant/justification_management_page.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -131,7 +136,7 @@ class _MyAppState extends State<MyApp> {
               path: '/admin/enseignants',
               builder: (context, state) => const EnseignantListPage(),
             ),
-             GoRoute(
+            GoRoute(
               path: '/admin/enseignants/new',
               builder: (context, state) => const EnseignantFormPage(id: null),
             ),
@@ -159,14 +164,16 @@ class _MyAppState extends State<MyApp> {
                 return DepartementFormPage(id: id);
               },
             ),
-             GoRoute(
+            GoRoute(
               path: '/admin/departements/details/:id',
               builder: (context, state) {
                 final idStr = state.pathParameters['id'];
                 final id = int.tryParse(idStr ?? '');
                 // Handle invalid ID case if necessary
-                 if (id == null) {
-                    return const Scaffold(body: Center(child: Text("ID Invalide")));
+                if (id == null) {
+                  return const Scaffold(
+                    body: Center(child: Text("ID Invalide")),
+                  );
                 }
                 return DepartementDetailsPage(id: id);
               },
@@ -184,6 +191,27 @@ class _MyAppState extends State<MyApp> {
             GoRoute(
               path: '/enseignant/edt',
               builder: (context, state) => const EnseignantEmploiDuTempsPage(),
+            ),
+            GoRoute(
+              path: '/enseignant/mes-seances',
+              builder: (context, state) => const EnseignantMesSeancesPage(),
+            ),
+            GoRoute(
+              path: '/enseignant/seance/:id',
+              builder: (context, state) {
+                final id = int.tryParse(state.pathParameters['id'] ?? '');
+                if (id == null) {
+                  return const Scaffold(
+                    body: Center(child: Text("ID Invalide")),
+                  );
+                }
+                return EnseignantSeanceDetailPage(seanceId: id);
+              },
+            ),
+
+            GoRoute(
+              path: '/enseignant/justifications',
+              builder: (context, state) => const JustificationManagementPage(),
             ),
 
             // --- ROUTES ETUDIANT ---
@@ -205,15 +233,15 @@ class _MyAppState extends State<MyApp> {
               builder: (context, state) =>
                   EmploiDuTempsPdfViewPage(id: state.pathParameters['id']),
             ),
-             GoRoute(
+            GoRoute(
               path: '/etudiant/absences',
               builder: (context, state) => const MesAbsencesPage(),
             ),
-             GoRoute(
+            GoRoute(
               path: '/etudiant/seances',
               builder: (context, state) => const MesSeancesPage(),
             ),
-             GoRoute(
+            GoRoute(
               path: '/etudiant/justifications',
               builder: (context, state) => const MesJustificationsPage(),
             ),
@@ -228,14 +256,6 @@ class _MyAppState extends State<MyApp> {
     // CRUCIAL : On écoute l'état de l'auth ici
     final authService = context.watch<AuthService>();
 
-    // Si l'authentification est en cours de chargement (vérification du token),
-    // on affiche un écran de chargement simple au lieu du routeur.
-    if (authService.loading) {
-      return const MaterialApp(
-        home: Scaffold(body: Center(child: CircularProgressIndicator())),
-      );
-    }
-
     // 1. On remplace ShadApp.router par MaterialApp.router
     return MaterialApp.router(
       debugShowCheckedModeBanner: false,
@@ -245,8 +265,15 @@ class _MyAppState extends State<MyApp> {
 
       routerConfig: _router,
 
-      // 3. On injecte le thème Shadcn via le builder
+      // 3. On injecte le thème Shadcn via le builder et on gère le loading
       builder: (context, child) {
+        if (authService.loading) {
+          return const MaterialApp(
+            home: Scaffold(body: Center(child: CircularProgressIndicator())),
+            debugShowCheckedModeBanner: false,
+          );
+        }
+
         return ShadTheme(
           data: ShadThemeData(
             brightness: Brightness.light,

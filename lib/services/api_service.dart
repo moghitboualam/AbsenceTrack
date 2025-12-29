@@ -7,28 +7,12 @@ import 'package:shared_preferences/shared_preferences.dart';
 class ApiService {
   late Dio dio;
   final String baseUrl =
-      "http://localhost:8080/api/v1"; // Utilise ton EnvService ici
-
-  String _getBaseUrl() {
-    if (kIsWeb) {
-      return 'http://localhost:8080/api/v1'; // Web
-    } else if (Platform.isAndroid) {
-      // Pour l'émulateur Android standard
-      return 'http://10.0.2.2:8080/api/v1';
-
-      // SI VOUS UTILISEZ UN TÉLÉPHONE PHYSIQUE ANDROID, décommentez la ligne ci-dessous
-      // et mettez l'IP de votre PC (ipconfig) :
-      // return 'http://172.24.0.1:8080/api/v1';
-    } else if (Platform.isIOS) {
-      return 'http://localhost:8080/api/v1'; // Simulateur iOS
-    }
-    return 'http://localhost:8080/api/v1';
-  }
+      "http://46.202.170.231:8080/api/v1"; // Utilise ton EnvService ici
 
   ApiService() {
     dio = Dio(
       BaseOptions(
-        baseUrl: _getBaseUrl(),
+        baseUrl: baseUrl,
         connectTimeout: const Duration(seconds: 10),
         receiveTimeout: const Duration(seconds: 10),
         contentType: 'application/json',

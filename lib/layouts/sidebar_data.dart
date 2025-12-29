@@ -32,6 +32,11 @@ class SidebarData {
           icon: LucideIcons.calendarClock,
           url: "/enseignant/edt",
         ),
+        SidebarItem(
+          title: "Mes Séances",
+          icon: LucideIcons.presentation,
+          url: "/enseignant/mes-seances",
+        ),
       ];
     }
     return [

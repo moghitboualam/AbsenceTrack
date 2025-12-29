@@ -45,6 +45,7 @@ class AuthService extends ChangeNotifier {
     notifyListeners();
     // print('Tentative de connexion pour l\'utilirsateur: $username');
     print('Avec le mot de passe: $password');
+    print('username $username');
     try {
       final response = await _apiService.dio.post(
         '/auth/login',
@@ -52,6 +53,8 @@ class AuthService extends ChangeNotifier {
       );
 
       final data = response.data;
+
+      print(data);
 
       // Normalisation comme dans ton React
       final userData = User(
