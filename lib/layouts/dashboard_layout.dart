@@ -25,7 +25,7 @@ class DashboardLayout extends StatelessWidget {
         ),
         // Titre ou Logo au centre ou à gauche selon préférence
         title: const Text(
-          "UMI FS",
+          "ENIAD-UMP",
           style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold),
         ),
         leading: Builder(
