@@ -22,7 +22,7 @@ class PromotionDto {
   factory PromotionDto.fromJson(Map<String, dynamic> json) {
     return PromotionDto(
       id: json['id'],
-      codePromotion: json['codePromotion'],
+      codePromotion: json['codePromotion'] ?? 'N/A',
       filiereId: json['filiereId'],
       filiereNom: json['filiereNom'],
       anneeUniversitaireId: json['anneeUniversitaireId'],

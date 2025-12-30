@@ -24,10 +24,7 @@ class DashboardLayout extends StatelessWidget {
           child: Container(color: Colors.grey[200], height: 1.0),
         ),
         // Titre ou Logo au centre ou à gauche selon préférence
-        title: const Text(
-          "ENIAD-UMP",
-          style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold),
-        ),
+          title: Image.asset('assets/images/logo.webp', height: 40),
         leading: Builder(
           builder: (context) => IconButton(
             icon: const Icon(lucide.LucideIcons.menu, color: Colors.black),
@@ -223,14 +220,9 @@ class _DrawerHeaderWidget extends StatelessWidget {
       decoration: BoxDecoration(
         border: Border(bottom: BorderSide(color: Colors.grey[100]!)),
       ),
-      child: const Row(
+      child: Row(
         children: [
-          Icon(lucide.LucideIcons.arrowUpCircle, color: Colors.blue, size: 30),
-          SizedBox(width: 15),
-          Text(
-            "UMI FS",
-            style: TextStyle(fontWeight: FontWeight.bold, fontSize: 22),
-          ),
+          Image.asset('assets/images/logo.webp', height: 40),
         ],
       ),
     );

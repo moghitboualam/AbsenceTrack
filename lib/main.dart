@@ -33,7 +33,10 @@ import 'pages/etudiant/etudiant_dashboard_page.dart';
 import 'pages/etudiant/emploi_du_temps_list_page.dart';
 import 'pages/etudiant/emploi_du_temps_detail_page.dart';
 import 'pages/etudiant/emploi_du_temps_pdf_view_page.dart';
-import 'pages/etudiant/student_placeholder_pages.dart'; // Import pages placeholders
+import 'pages/etudiant/emploi_du_temps_pdf_view_page.dart';
+import 'pages/etudiant/mes_absences_page.dart';
+import 'pages/etudiant/mes_seances_page.dart';
+import 'pages/etudiant/mes_justifications_page.dart';
 import 'pages/enseignant/enseignant_dashboard_page.dart';
 import 'pages/enseignant/emploi_du_temps_page.dart';
 import 'pages/admin/emploi_du_temps/emploi_du_temps_list_page.dart';
@@ -74,38 +77,34 @@ class _MyAppState extends State<MyApp> {
 
     _router = GoRouter(
       initialLocation: '/login',
-      refreshListenable: authService, // Le routeur réagit aux notifyListeners()
+      refreshListenable: authService,
+      debugLogDiagnostics: true, // Verification debug
       redirect: (context, state) {
-        // 1. Si l'auth charge encore, on ne redirige pas (on reste sur place)
+        // 1. Si l'auth charge encore
         if (authService.loading) return null;
 
         final bool loggedIn = authService.isAuthenticated;
         final bool isLoggingIn = state.matchedLocation == '/login';
 
-        // 2. Si non connecté et pas sur la page login -> Login
+        // 2. Si non connecté et pas sur login -> Login
         if (!loggedIn && !isLoggingIn) return '/login';
 
-        // 3. Si connecté et sur la page login -> Accueil
-        if (loggedIn && isLoggingIn) return authService.getHomeRoute();
-
-        // 4. Vérification des Rôles (Sécurité)
-        // On vérifie que 'user' n'est pas null avant de vérifier le rôle
-        if (loggedIn && authService.user != null) {
-          final role = authService.user!.role;
-
-          if (state.matchedLocation.startsWith('/admin') && role != 'admin') {
-            return authService.getHomeRoute();
-          }
-          if (state.matchedLocation.startsWith('/enseignant') &&
-              role != 'enseignant') {
-            return authService.getHomeRoute();
-          }
-          if (state.matchedLocation.startsWith('/etudiant') &&
-              role != 'etudiant') {
-            return authService.getHomeRoute();
-          }
+        // 3. Si connecté et sur login -> Accueil
+        if (loggedIn && isLoggingIn) {
+          final route = authService.getHomeRoute();
+          print("Redirecting to Home Route: '$route'"); // Debug print
+          return route;
         }
 
+        // 4. Vérification des Rôles
+        if (loggedIn && authService.user != null) {
+            final role = authService.user!.role;
+            // ... (rest of logic same)
+            if (state.matchedLocation.startsWith('/etudiant') && role != 'etudiant') {
+                 print("Role mismatch! User role: $role, Path: ${state.matchedLocation}");
+                 return authService.getHomeRoute();
+            }
+        }
         return null;
       },
       routes: [
@@ -344,32 +343,40 @@ class _MyAppState extends State<MyApp> {
             GoRoute(
               path: '/etudiant/emploi-du-temps',
               builder: (context, state) => const EmploiDuTempsListPage(),
+              routes: [
+                GoRoute(
+                  path: ':id',
+                  builder: (context, state) =>
+                      EmploiDuTempsDetailPage(id: state.pathParameters['id']),
+                ),
+                GoRoute(
+                  path: 'view-pdf/:id',
+                  builder: (context, state) =>
+                      EmploiDuTempsPdfViewPage(id: state.pathParameters['id']),
+                ),
+              ],
             ),
             GoRoute(
-              path: '/etudiant/emploi-du-temps/:id',
-              builder: (context, state) =>
-                  EmploiDuTempsDetailPage(id: state.pathParameters['id']),
-            ),
-            GoRoute(
-              path: '/etudiant/emploi-du-temps/view-pdf/:id',
-              builder: (context, state) =>
-                  EmploiDuTempsPdfViewPage(id: state.pathParameters['id']),
-            ),
-             GoRoute(
               path: '/etudiant/absences',
               builder: (context, state) => const MesAbsencesPage(),
             ),
-             GoRoute(
+            GoRoute(
               path: '/etudiant/seances',
               builder: (context, state) => const MesSeancesPage(),
             ),
-             GoRoute(
+            GoRoute(
               path: '/etudiant/justifications',
               builder: (context, state) => const MesJustificationsPage(),
             ),
           ],
         ),
       ],
+      errorBuilder: (context, state) => Scaffold(
+        appBar: AppBar(title: const Text("Page introuvable")),
+        body: Center(
+          child: Text("Erreur : La page ${state.uri.path} n'existe pas."),
+        ),
+      ),
     );
   }
 

@@ -26,7 +26,7 @@ class ModulePromotionDto {
   factory ModulePromotionDto.fromJson(Map<String, dynamic> json) {
     return ModulePromotionDto(
       id: json['id'],
-      code: json['code'],
+      code: json['code'] ?? 'N/A',
       moduleReferenceId: json['moduleReferenceId'],
       moduleReferenceNom: json['moduleReferenceNom'],
       semestreId: json['semestreId'],

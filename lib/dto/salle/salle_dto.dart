@@ -17,11 +17,11 @@ class SalleDto {
 
   factory SalleDto.fromJson(Map<String, dynamic> json) {
     return SalleDto(
-      id: json['id'],
-      code: json['code'],
-      capacite: json['capacite'],
-      type: json['type'],
-      blocId: json['blocId'],
+      id: json['id'] ?? 0,
+      code: json['code'] ?? 'Unknown',
+      capacite: json['capacite'] ?? 0,
+      type: json['type'] ?? 'Standard',
+      blocId: json['blocId'] ?? 0,
       blocNom: json['blocNom'],
     );
   }

@@ -40,6 +40,7 @@ class _LoginPageState extends State<LoginPage> {
         _passwordController.text,
       );
     } catch (e) {
+      if (!mounted) return;
       setState(() {
         _errorMessage = context.read<AuthService>().error;
       });
@@ -82,10 +83,9 @@ class _LoginPageState extends State<LoginPage> {
                     child: Column(
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                        Icon(
-                          Icons.lock_person,
-                          size: 64,
-                          color: theme.colorScheme.primary,
+                        Image.asset(
+                          'assets/images/logo.webp',
+                          height: 80,
                         ),
                         const SizedBox(height: 16),
                         Text(
