@@ -301,7 +301,7 @@ class _EnseignantMesSeancesPageState extends State<EnseignantMesSeancesPage> {
                               ShadButton.outline(
                                 size: ShadButtonSize.sm,
                                 onPressed: () => context.push(
-                                  '/enseignant/seance/${seance.id}',
+                                  '/enseignant/seances/${seance.id}',
                                 ),
                                 child: const Text("Détails"),
                               ),

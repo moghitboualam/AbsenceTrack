@@ -39,6 +39,10 @@ import 'pages/etudiant/mes_seances_page.dart';
 import 'pages/etudiant/mes_justifications_page.dart';
 import 'pages/enseignant/enseignant_dashboard_page.dart';
 import 'pages/enseignant/emploi_du_temps_page.dart';
+import 'pages/enseignant/enseignant_mes_seances_page.dart';
+import 'pages/enseignant/justification_management_page.dart';
+import 'pages/enseignant/enseignant_seance_detail_page.dart';
+
 import 'pages/admin/emploi_du_temps/emploi_du_temps_list_page.dart';
 import 'pages/admin/emploi_du_temps/emploi_du_temps_form_page.dart';
 import 'pages/admin/emploi_du_temps/emploi_du_temps_manage_page.dart';
@@ -310,6 +314,32 @@ class _MyAppState extends State<MyApp> {
               path: '/enseignant/edt',
               builder: (context, state) => const EnseignantEmploiDuTempsPage(),
             ),
+            GoRoute(
+              path: '/enseignant/seances',
+              builder: (context, state) => const EnseignantMesSeancesPage(),
+            ),
+            GoRoute(
+              path: '/enseignant/seances/:id',
+              builder: (context, state) {
+                final id = int.tryParse(state.pathParameters['id'] ?? '');
+                if (id == null) {
+                  return const Scaffold(body: Center(child: Text("ID Invalide")));
+                }
+                return EnseignantSeanceDetailPage(seanceId: id);
+              },
+            ),
+            // GoRoute(
+            //   path: '/enseignant/absences',
+            //   builder: (context, state) => const EnseignantAbsencesPage(),
+            // ),
+            GoRoute(
+              path: '/enseignant/justifications',
+              builder: (context, state) {
+                return JustificationManagementPage();
+              },
+            ),
+            
+
 
             // --- ROUTES ADMIN EMPLOI DU TEMPS ---
             GoRoute(

@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../models/user.dart';
@@ -75,6 +76,12 @@ class AuthService extends ChangeNotifier {
       notifyListeners();
       return userData;
     } catch (err) {
+      print('LOGIN ERROR: $err');
+      if (err is DioException) {
+        print('DioError Type: ${err.type}');
+        print('DioError Message: ${err.message}');
+        print('DioError Response: ${err.response}');
+      }
       _error = "Identifiants invalides ou erreur serveur";
       _loading = false;
       notifyListeners();

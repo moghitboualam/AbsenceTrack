@@ -231,25 +231,33 @@ class _EnseignantDashboardPageState extends State<EnseignantDashboardPage> {
                 children: [
                   _buildDashboardCard(
                     context,
-                    title: 'Mon Emploi du Temps',
-                    icon: Icons.calendar_today,
-                    onTap: () => context.go('/enseignant/edt'),
+                    title: 'Emploi du Temps',
+                    icon: LucideIcons.calendar,
+                    onTap: () => context.push('/enseignant/edt'),
                     color: Colors.blue.shade100,
                     iconColor: Colors.blue,
                   ),
                   _buildDashboardCard(
                     context,
-                    title: 'Gestion Salles (À venir)',
-                    icon: Icons.room,
-                    onTap: () {},
+                    title: 'Mes Séances',
+                    icon: LucideIcons.presentation,
+                    onTap: () => context.push('/enseignant/seances'),
                     color: Colors.orange.shade100,
                     iconColor: Colors.orange,
                   ),
                   _buildDashboardCard(
                     context,
-                    title: 'Gestion Justificatifs',
-                    icon: Icons.description,
-                    onTap: () => context.go('/enseignant/justifications'),
+                    title: 'Justifications',
+                    icon: LucideIcons.fileText,
+                    onTap: () => context.push('/enseignant/justifications'),
+                    color: Colors.purple.shade100,
+                    iconColor: Colors.purple,
+                  ),
+                  _buildDashboardCard(
+                    context,
+                    title: 'Absences',
+                    icon: LucideIcons.userX,
+                    onTap: () => context.push('/enseignant/absences'),
                     color: Colors.purple.shade100,
                     iconColor: Colors.purple,
                   ),
@@ -270,7 +278,7 @@ class _EnseignantDashboardPageState extends State<EnseignantDashboardPage> {
                     child: Center(
                       child: Column(
                         children: [
-                          Icon(Icons.book, size: 48, color: Colors.grey),
+                          Icon(LucideIcons.book, size: 48, color: Colors.grey),
                           SizedBox(height: 16),
                           Text("Aucun module assigné ce semestre."),
                         ],
@@ -298,7 +306,7 @@ class _EnseignantDashboardPageState extends State<EnseignantDashboardPage> {
                             color: Colors.purple.shade50,
                             shape: BoxShape.circle,
                           ),
-                          child: const Icon(Icons.book, color: Colors.purple),
+                          child: const Icon(LucideIcons.book, color: Colors.purple),
                         ),
                         title: Text(
                           mod.moduleLibelle,

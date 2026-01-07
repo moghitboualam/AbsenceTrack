@@ -16,10 +16,10 @@ class ApiService {
       return 'http://localhost:8080/api/v1'; // Web
     } else if (Platform.isAndroid) {
       // Pour l'émulateur Android standard
-      // return 'http://10.0.2.2:8080/api/v1';
+       return 'http://10.0.2.2:8080/api/v1';
 
       // Pour Device Physique (USB Debugging) via 'adb reverse tcp:8080 tcp:8080'
-       return 'http://localhost:8080/api/v1';
+      // return 'http://localhost:8080/api/v1';
        
        // Si adb reverse non utilisé: remplacer par l'IP de votre PC (ex: http://192.168.1.15:8080/api/v1)
     } else if (Platform.isIOS) {
@@ -47,6 +47,8 @@ class ApiService {
           if (token != null) {
             options.headers['Authorization'] = 'Bearer $token';
           }
+           print('Request: ${options.method} ${options.uri}');
+           print('Headers: ${options.headers}');
           return handler.next(options);
         },
         onError: (DioException e, handler) async {
